@@ -6,7 +6,6 @@
     <title>Game Tumbuhan Cerdas 🌱</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Gaya dasar tetap sama */
         body { font-family: 'Comic Neue', cursive; background: #a8e6cf url('game_bg.jpg') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow: hidden; }
         .game-container { background: rgba(255, 255, 255, 0.95); border-radius: 30px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); max-width: 550px; width: 90%; text-align: center; border: 8px solid #4CAF50; position: relative; }
         .progress-container { width: 100%; background: #ddd; border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
@@ -18,15 +17,16 @@
         .correct-blink { background-color: #4CAF50 !important; transform: scale(1.05); }
         .wrong-blink { background-color: #f44336 !important; }
 
-        /* GAYA BARU UNTUK KOTAK TIPS (CUSTOM MODAL) */
+        /* MODAL TIPS (Supaya tulisan nadiraaulia... ilang) */
         .custom-alert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 100; }
         .alert-content { background: #fff; padding: 30px; border-radius: 20px; border: 5px solid #ff9800; max-width: 400px; width: 80%; text-align: center; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .alert-content h3 { color: #ff9800; margin-top: 0; }
-        .alert-content p { font-size: 1.1rem; color: #333; line-height: 1.5; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 10; text-align: center; }
+        /* LAYAR MENANG / KALAH */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 50; text-align: center; }
         .overlay.active { display: flex; }
+        .win-animation video { width: 280px; border-radius: 20px; border: 4px solid #ffeb3b; margin: 15px 0; }
+        
         .btn-action { background: #ffc107; color: black; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 5px 0 #ffa000; }
     </style>
 </head>
@@ -60,6 +60,11 @@
     <div class="overlay" id="winScreen">
         <h2 style="color: #ffeb3b;">LUAR BIASA! 🎉</h2>
         <p>Skor Akhirmu: <span id="finalScore">0</span></p>
+        <div class="win-animation">
+            <video id="winVideo" loop muted playsinline>
+                <source src="winner_character.mp4" type="video/mp4">
+            </video>
+        </div>
         <button class="btn-action" onclick="location.reload()">Main Lagi</button>
     </div>
 
@@ -79,8 +84,8 @@
             { q: "Fotosintesis terjadi di...", a: ["Akar", "Biji", "Daun", "Batang"], c: 2 },
             { q: "Zat hijau pada daun disebut?", a: ["Vitamin", "Klorofil", "Oksigen", "Pupuk"], c: 1 },
             { q: "Bagian tumbuhan yang menghasilkan biji adalah...", a: ["Akar", "Bunga", "Daun", "Duri"], c: 1 },
-            { q: "Gas yang dihasilkan saat fotosintesis?", a: ["Oksigen", "Karbondioksida", "Nitrogen", "Uap Air"], c: 0 },
-            { q: "Singkong menyimpan makanan di...", a: ["Biji", "Daun", "Akar/Umbi", "Bunga"], c: 2 },
+            { q: "Gas yang dihasilkan tumbuhan saat fotosintesis?", a: ["Oksigen", "Karbondioksida", "Nitrogen", "Uap Air"], c: 0 },
+            { q: "Singkong menyimpan makanan di bagian...", a: ["Biji", "Daun", "Akar/Umbi", "Bunga"], c: 2 },
             { q: "Pohon mangga memiliki akar jenis...", a: ["Serabut", "Tunggang", "Napas", "Gantung"], c: 1 },
             { q: "Apa yang menyalurkan air dari akar ke daun?", a: ["Bunga", "Batang", "Buah", "Biji"], c: 1 },
             { q: "Tumbuhan pemakan serangga disebut?", a: ["Insektivora", "Herbivora", "Omnivora", "Karnivora"], c: 0 },
@@ -140,8 +145,6 @@
             } else {
                 btnElement.classList.add('wrong-blink');
                 document.getElementById('wrongSfx').play();
-                
-                // MUNCULKAN KOTAK TIPS BUATAN SENDIRI
                 showCustomAlert(educationalTips[currentQ]);
             }
         }
@@ -170,6 +173,7 @@
             document.getElementById('winSfx').play();
             document.getElementById('finalScore').innerText = score;
             document.getElementById('winScreen').classList.add('active');
+            document.getElementById('winVideo').play(); // INI YANG BIKIN JOGET
         }
 
         function showLose() {
