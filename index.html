@@ -73,9 +73,9 @@
         <button class="btn-action" onclick="location.reload()">Mulai Ulang</button>
     </div>
 
-    <audio id="bgm" src="bgm_game.m4a" loop></audio>
-    <audio id="correctSfx" src="correct_sound.m4a"></audio>
-    <audio id="wrongSfx" src="wrong_sound.m4a"></audio>
+    <audio id="bgm" src="bgm_game.m4a.aac" loop></audio>
+    <audio id="correctSfx" src="correct_sound.m4a.aac"></audio>
+    <audio id="wrongSfx" src="wrong_sound.m4a.aac"></audio>
 
     <script>
         const questions = [
@@ -91,6 +91,19 @@
             { q: "Putri malu menutup jika...", a: ["Disiram", "Disentuh", "Dipupuk", "Diterangi"], c: 1 }
         ];
 
+        const educationalTips = [
+            "Akar berada di bawah tanah untuk menyerap air dan mineral.",
+            "Daun adalah tempat tumbuhan memasak makanan (fotosintesis).",
+            "Klorofil adalah zat yang memberikan warna hijau pada daun.",
+            "Bunga yang cantik bertugas sebagai alat berkembang biak.",
+            "Oksigen adalah gas baik yang dihasilkan tumbuhan agar kita bisa bernapas.",
+            "Akar singkong membesar karena menyimpan cadangan makanan.",
+            "Akar tunggang itu kuat dan besar, biasanya ada di pohon mangga.",
+            "Batang itu seperti pipa yang menyalurkan air dari akar ke daun.",
+            "Insektivora adalah sebutan untuk tumbuhan pemakan serangga.",
+            "Putri Malu menutup daunnya untuk melindungi diri saat disentuh."
+        ];
+
         let currentQ = 0, lives = 3, score = 0;
 
         function startGame() {
@@ -104,7 +117,6 @@
             const qData = questions[currentQ];
             document.getElementById('question-area').innerText = qData.q;
             
-            // Update Progress Bar
             const progress = (currentQ / questions.length) * 100;
             document.getElementById('progressBar').style.width = progress + "%";
 
@@ -120,7 +132,6 @@
         }
 
         function checkAnswer(idx, btnElement) {
-            // Matikan tombol lain supaya tidak diklik dua kali
             const allBtns = document.querySelectorAll('.option-button');
             allBtns.forEach(b => b.disabled = true);
 
@@ -134,10 +145,14 @@
                     currentQ++;
                     if (currentQ < questions.length) loadQuestion();
                     else showWin();
-                }, 1000);
+                }, 1200);
             } else {
                 btnElement.classList.add('wrong-blink');
                 document.getElementById('wrongSfx').play();
+                
+                // Pesan Edukasi muncul di sini
+                alert("Yah, Salah! 💡 Tips: " + educationalTips[currentQ]);
+                
                 lives--;
                 document.getElementById('heartsContainer').innerText = "❤️".repeat(lives);
                 
