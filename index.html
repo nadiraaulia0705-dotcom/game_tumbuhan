@@ -17,15 +17,15 @@
         .correct-blink { background-color: #4CAF50 !important; transform: scale(1.05); }
         .wrong-blink { background-color: #f44336 !important; }
 
-        /* MODAL TIPS (Supaya tulisan nadiraaulia... ilang) */
-        .custom-alert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 100; }
-        .alert-content { background: #fff; padding: 30px; border-radius: 20px; border: 5px solid #ff9800; max-width: 400px; width: 80%; text-align: center; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* MODAL TIPS TANPA NAMA GITHUB */
+        .custom-alert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 200; }
+        .alert-content { background: #fff; padding: 30px; border-radius: 20px; border: 5px solid #ff9800; max-width: 400px; width: 80%; text-align: center; }
 
-        /* LAYAR MENANG / KALAH */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 50; text-align: center; }
+        /* LAYAR MENANG - PASTIKAN VIDEO DI DEPAN */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; }
         .overlay.active { display: flex; }
-        .win-animation video { width: 280px; border-radius: 20px; border: 4px solid #ffeb3b; margin: 15px 0; }
+        .win-animation { margin: 20px 0; }
+        #winVideo { width: 300px; border-radius: 20px; border: 5px solid #ffeb3b; display: block; }
         
         .btn-action { background: #ffc107; color: black; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 5px 0 #ffa000; }
     </style>
@@ -59,10 +59,11 @@
 
     <div class="overlay" id="winScreen">
         <h2 style="color: #ffeb3b;">LUAR BIASA! 🎉</h2>
-        <p>Skor Akhirmu: <span id="finalScore">0</span></p>
+        <p>Skor Akhirmu: <span id="finalScoreText">0</span></p>
         <div class="win-animation">
-            <video id="winVideo" loop muted playsinline>
+            <video id="winVideo" loop playsinline>
                 <source src="winner_character.mp4" type="video/mp4">
+                Browser kamu tidak mendukung video.
             </video>
         </div>
         <button class="btn-action" onclick="location.reload()">Main Lagi</button>
@@ -84,8 +85,8 @@
             { q: "Fotosintesis terjadi di...", a: ["Akar", "Biji", "Daun", "Batang"], c: 2 },
             { q: "Zat hijau pada daun disebut?", a: ["Vitamin", "Klorofil", "Oksigen", "Pupuk"], c: 1 },
             { q: "Bagian tumbuhan yang menghasilkan biji adalah...", a: ["Akar", "Bunga", "Daun", "Duri"], c: 1 },
-            { q: "Gas yang dihasilkan tumbuhan saat fotosintesis?", a: ["Oksigen", "Karbondioksida", "Nitrogen", "Uap Air"], c: 0 },
-            { q: "Singkong menyimpan makanan di bagian...", a: ["Biji", "Daun", "Akar/Umbi", "Bunga"], c: 2 },
+            { q: "Gas yang dihasilkan saat fotosintesis?", a: ["Oksigen", "Karbondioksida", "Nitrogen", "Uap Air"], c: 0 },
+            { q: "Singkong menyimpan makanan di...", a: ["Biji", "Daun", "Akar/Umbi", "Bunga"], c: 2 },
             { q: "Pohon mangga memiliki akar jenis...", a: ["Serabut", "Tunggang", "Napas", "Gantung"], c: 1 },
             { q: "Apa yang menyalurkan air dari akar ke daun?", a: ["Bunga", "Batang", "Buah", "Biji"], c: 1 },
             { q: "Tumbuhan pemakan serangga disebut?", a: ["Insektivora", "Herbivora", "Omnivora", "Karnivora"], c: 0 },
@@ -171,9 +172,13 @@
         function showWin() {
             document.getElementById('bgm').pause();
             document.getElementById('winSfx').play();
-            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalScoreText').innerText = score;
             document.getElementById('winScreen').classList.add('active');
-            document.getElementById('winVideo').play(); // INI YANG BIKIN JOGET
+            
+            // PAKSA VIDEO JALAN
+            const video = document.getElementById('winVideo');
+            video.muted = false; // Pastikan suara video nyala kalau ada
+            video.play();
         }
 
         function showLose() {
