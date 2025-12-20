@@ -76,6 +76,7 @@
     <audio id="bgm" src="bgm_game.m4a.aac" loop></audio>
     <audio id="correctSfx" src="correct_sound.m4a.aac"></audio>
     <audio id="wrongSfx" src="wrong_sound.m4a.aac"></audio>
+    <audio id="winSfx" src="win_sound.m4a.aac"></audio>
 
     <script>
         const questions = [
@@ -150,7 +151,6 @@
                 btnElement.classList.add('wrong-blink');
                 document.getElementById('wrongSfx').play();
                 
-                // Pesan Edukasi muncul di sini
                 alert("Yah, Salah! 💡 Tips: " + educationalTips[currentQ]);
                 
                 lives--;
@@ -168,6 +168,7 @@
 
         function showWin() {
             document.getElementById('bgm').pause();
+            document.getElementById('winSfx').play(); // Putar suara sorakan menang
             document.getElementById('finalScore').innerText = score;
             document.getElementById('winScreen').classList.add('active');
             document.getElementById('winVideo').play();
