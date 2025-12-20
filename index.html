@@ -17,15 +17,14 @@
         .correct-blink { background-color: #4CAF50 !important; transform: scale(1.05); }
         .wrong-blink { background-color: #f44336 !important; }
 
-        /* MODAL TIPS TANPA NAMA GITHUB */
+        /* MODAL TIPS CUSTOM */
         .custom-alert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 200; }
         .alert-content { background: #fff; padding: 30px; border-radius: 20px; border: 5px solid #ff9800; max-width: 400px; width: 80%; text-align: center; }
 
-        /* LAYAR MENANG - PASTIKAN VIDEO DI DEPAN */
+        /* LAYAR MENANG / KALAH */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; }
         .overlay.active { display: flex; }
-        .win-animation { margin: 20px 0; }
-        #winVideo { width: 300px; border-radius: 20px; border: 5px solid #ffeb3b; display: block; }
+        #winVideo { width: 300px; border-radius: 20px; border: 5px solid #ffeb3b; display: block; margin-bottom: 15px; }
         
         .btn-action { background: #ffc107; color: black; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 5px 0 #ffa000; }
     </style>
@@ -36,7 +35,7 @@
         <div class="alert-content">
             <h3>💡 Tips Edukasi</h3>
             <p id="alertMessage"></p>
-            <button class="btn-action" onclick="closeAlert()">Mengerti!</button>
+            <button class="btn-action" onclick="closeAlert()">Lanjut Game</button>
         </div>
     </div>
 
@@ -60,12 +59,9 @@
     <div class="overlay" id="winScreen">
         <h2 style="color: #ffeb3b;">LUAR BIASA! 🎉</h2>
         <p>Skor Akhirmu: <span id="finalScoreText">0</span></p>
-        <div class="win-animation">
-            <video id="winVideo" loop playsinline>
-                <source src="winner_character.mp4" type="video/mp4">
-                Browser kamu tidak mendukung video.
-            </video>
-        </div>
+        <video id="winVideo" loop playsinline>
+            <source src="winner_character.mp4" type="video/mp4">
+        </video>
         <button class="btn-action" onclick="location.reload()">Main Lagi</button>
     </div>
 
@@ -133,6 +129,7 @@
         function checkAnswer(idx, btnElement) {
             const allBtns = document.querySelectorAll('.option-button');
             allBtns.forEach(b => b.disabled = true);
+            
             if (idx === questions[currentQ].c) {
                 btnElement.classList.add('correct-blink');
                 document.getElementById('correctSfx').play();
@@ -142,10 +139,16 @@
                     currentQ++;
                     if (currentQ < questions.length) loadQuestion();
                     else showWin();
-                }, 1200);
+                }, 1000);
             } else {
                 btnElement.classList.add('wrong-blink');
                 document.getElementById('wrongSfx').play();
+                
+                // LANGSUNG KURANGI NYAWA SAAT SALAH KLIK
+                lives--;
+                document.getElementById('heartsContainer').innerText = "❤️".repeat(lives);
+                
+                // Tampilkan tips edukasi
                 showCustomAlert(educationalTips[currentQ]);
             }
         }
@@ -157,15 +160,17 @@
 
         function closeAlert() {
             document.getElementById('customAlert').style.display = 'none';
-            lives--;
-            document.getElementById('heartsContainer').innerText = "❤️".repeat(lives);
-            if (lives <= 0) showLose();
-            else {
-                const allBtns = document.querySelectorAll('.option-button');
-                allBtns.forEach(b => {
-                    b.disabled = false;
-                    b.classList.remove('wrong-blink');
-                });
+            
+            if (lives <= 0) {
+                showLose();
+            } else {
+                // Lanjut ke soal berikutnya meski salah (agar tidak macet di soal yang sama)
+                currentQ++;
+                if (currentQ < questions.length) {
+                    loadQuestion();
+                } else {
+                    showWin();
+                }
             }
         }
 
@@ -174,11 +179,7 @@
             document.getElementById('winSfx').play();
             document.getElementById('finalScoreText').innerText = score;
             document.getElementById('winScreen').classList.add('active');
-            
-            // PAKSA VIDEO JALAN
-            const video = document.getElementById('winVideo');
-            video.muted = false; // Pastikan suara video nyala kalau ada
-            video.play();
+            document.getElementById('winVideo').play();
         }
 
         function showLose() {
