@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Quest: 3 Levels 🌿</title>
+    <title>Plant Quest: Winner Edition 🌿</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #e8f5e9 url('game_bg.jpg') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #2e7d32; overflow: hidden; }
@@ -15,17 +15,16 @@
         .btn-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #e68a00; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; padding: 20px; }
         .input-field { width: 80%; padding: 12px; border-radius: 10px; border: 2px solid #4caf50; text-align: center; font-family: 'Poppins'; margin-bottom: 15px; font-size: 1.1rem; outline: none; }
-        #plant-display { height: 180px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 10px; }
-        #plant-img { max-height: 100%; transition: 0.4s; }
+        .win-vid { width: 250px; border-radius: 20px; margin-bottom: 20px; border: 3px solid #ffeb3b; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; text-align: center;">
+    <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300;">
         <h1 style="color: #4caf50;">🌱 Plant Quest</h1>
-        <p>Gunakan pengetahuanmu untuk menanam pohon!</p>
+        <p>Gunakan ilmu untuk menanam pohon!</p>
         <input type="text" id="playerName" class="input-field" placeholder="Nama Pekebun...">
-        <button class="btn-main" onclick="startGame()">MULAI GAME</button>
+        <button class="btn-main" onclick="startGame()">GAS MULAI</button>
     </div>
 
     <div class="game-container">
@@ -41,7 +40,9 @@
         </div>
 
         <div id="area-lvl2" style="display:none;">
-            <div id="plant-display"><img id="plant-img-lvl2" src="pohon_kecil.png"></div>
+            <div style="height: 150px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 10px;">
+                <img src="pohon_kecil.png" style="max-height: 100%;">
+            </div>
             <p id="hint-box" style="font-weight:bold; color:#333; margin-bottom:15px;"></p>
             <input type="text" id="typeAnswer" class="input-field" placeholder="Ketik jawaban..." autocomplete="off">
             <button class="btn-main" style="font-size:1rem; padding:10px 25px;" onclick="checkTypeAnswer()">KIRIM</button>
@@ -49,16 +50,24 @@
     </div>
 
     <div class="overlay" id="levelUpScreen">
+        <video id="winnerVid" class="win-vid" muted playsinline>
+            <source src="winner_character.mp4" type="video/mp4">
+        </video>
         <h1 style="color: #ffeb3b;">LEVEL SELESAI! 🆙</h1>
         <button class="btn-main" onclick="nextLevel()">LANJUT</button>
     </div>
+
     <div class="overlay" id="winScreen">
+        <video id="finalWinnerVid" class="win-vid" muted playsinline>
+            <source src="winner_character.mp4" type="video/mp4">
+        </video>
         <h1 style="color: #4caf50; font-size: 2.5rem;">MASTER GARDENER! 🏆</h1>
         <button class="btn-main" onclick="location.reload()">MAIN LAGI</button>
     </div>
+
     <div class="overlay" id="loseScreen">
         <h1 style="color: #ff4757; font-size: 2.5rem;">GAGAL 😭</h1>
-        <p>Jawabanmu kurang tepat. Ayo coba lagi!</p>
+        <p>Jangan menyerah, ayo asah pengetahuanmu!</p>
         <button class="btn-main" onclick="location.reload()">COBA LAGI</button>
     </div>
 
@@ -81,19 +90,19 @@
         ];
 
         const qLvl2 = [
-            { q: "Proses memasak makanan tumbuhan disebut?", a: "fotosintesis" },
-            { q: "Hasil fotosintesis yang dihirup manusia?", a: "oksigen" },
-            { q: "Tumbuhan yang menyimpan air di batang (daun berduri)?", a: "kaktus" },
-            { q: "Tempat memasak makanan pada tumbuhan?", a: "daun" },
+            { q: "Proses memasak makanan tumbuhan?", a: "fotosintesis" },
+            { q: "Hasil fotosintesis yang kita hirup?", a: "oksigen" },
+            { q: "Tumbuhan yang menyimpan air di batang?", a: "kaktus" },
+            { q: "Tempat memasak makanan tumbuhan?", a: "daun" },
             { q: "Tumbuhan pemakan serangga?", a: "kantong semar" }
         ];
 
         const qLvl3 = [
-            { q: "Bunga yang selalu menghadap arah matahari?", c: ["Mawar", "Matahari", "Melati"], a: 1 },
-            { q: "Tumbuhan yang menutup daun saat disentuh?", c: ["Putri Malu", "Rumput", "Cemara"], a: 0 },
-            { q: "Buah yang kulitnya berduri dan baunya menyengat?", c: ["Nanas", "Durian", "Salak"], a: 1 },
-            { q: "Tumbuhan yang akarnya bisa menembus tembok bangunan?", c: ["Beringin", "Lumut", "Parasit"], a: 0 },
-            { q: "Pohon yang dikenal sebagai pohon kehidupan di gurun?", c: ["Pinus", "Kurma", "Bambu"], a: 1 }
+            { q: "Aku bunga yang selalu mengikuti arah matahari. Siapakah aku?", c: ["Mawar", "Matahari", "Melati"], a: 1 },
+            { q: "Aku tumbuhan yang menutup daun saat disentuh. Aku adalah...", c: ["Putri Malu", "Rumput", "Cemara"], a: 0 },
+            { q: "Aku buah yang kulitnya berduri tapi dalamnya manis. Aku adalah...", c: ["Nanas", "Durian", "Salak"], a: 1 },
+            { q: "Aku dikenal sebagai 'Emas Hijau' karena bermanfaat. Tumbuhan apa aku?", c: ["Padi", "Bambu", "Kelapa"], a: 2 },
+            { q: "Tumbuhan yang akarnya bisa menembus tembok?", c: ["Beringin", "Lumut", "Parasit"], a: 0 }
         ];
 
         function startGame() {
@@ -162,18 +171,28 @@
         }
 
         function finishLevel() {
+            document.getElementById('bgm').pause();
+            document.getElementById('sfxWin').play();
+            
             if (currentLevel === 3) {
-                document.getElementById('bgm').pause();
-                document.getElementById('sfxWin').play();
+                const vid = document.getElementById('finalWinnerVid');
                 document.getElementById('winScreen').style.display = 'flex';
+                vid.currentTime = 0;
+                vid.play();
             } else {
+                const vid = document.getElementById('winnerVid');
                 document.getElementById('levelUpScreen').style.display = 'flex';
+                vid.currentTime = 0;
+                vid.play();
             }
         }
 
         function nextLevel() {
             currentLevel++; currentQ = 0;
             document.getElementById('levelUpScreen').style.display = 'none';
+            document.getElementById('sfxWin').pause();
+            document.getElementById('sfxWin').currentTime = 0;
+            document.getElementById('bgm').play();
             loadLevel();
         }
 
@@ -189,7 +208,6 @@
 
         function updateHearts() { document.getElementById('heartsContainer').innerText = "❤️".repeat(lives); }
 
-        // PERBAIKAN SOUND KETIK (INSTAN)
         document.getElementById('typeAnswer').addEventListener('input', () => {
             const sound = document.getElementById('sfxType');
             sound.pause();
