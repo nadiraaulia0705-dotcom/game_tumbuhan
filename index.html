@@ -3,224 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Quest: 3 Levels Journey 🌿</title>
+    <title>Plant Quest: 3 Unique Levels 🌿</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: #e8f5e9 url('game_bg.jpg') no-repeat center center fixed; 
-            background-size: cover; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            color: #2e7d32; 
-            overflow: hidden; 
-        }
-        .game-container { 
-            background: rgba(255, 255, 255, 0.9); 
-            border-radius: 30px; 
-            padding: 25px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            width: 90%; 
-            max-width: 450px; 
-            text-align: center; 
-            border: 5px solid #4caf50; 
-            position: relative; 
-            backdrop-filter: blur(5px);
-        }
-        .stats { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; }
+        body { font-family: 'Poppins', sans-serif; background: #e8f5e9 url('game_bg.jpg') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #2e7d32; overflow: hidden; }
+        .game-container { background: rgba(255, 255, 255, 0.9); border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 90%; max-width: 450px; text-align: center; border: 5px solid #4caf50; backdrop-filter: blur(5px); }
         .level-badge { background: #4caf50; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-size: 0.8rem; margin-bottom: 15px; font-weight: bold; }
-        .btn-choice { background: #fff; border: 2px solid #4caf50; color: #2e7d32; padding: 12px; margin: 8px 0; width: 100%; border-radius: 12px; cursor: pointer; font-family: 'Poppins'; font-weight: bold; transition: 0.2s; text-align: left; }
+        .btn-choice { background: #fff; border: 2px solid #4caf50; color: #2e7d32; padding: 12px; margin: 8px 0; width: 100%; border-radius: 12px; cursor: pointer; font-family: 'Poppins'; font-weight: bold; text-align: left; transition: 0.2s; }
         .btn-choice:hover { background: #e8f5e9; transform: scale(1.02); }
-        .btn-care { background: #2196f3; color: white; border: none; padding: 15px 35px; border-radius: 50px; font-size: 1.1rem; cursor: pointer; font-weight: bold; box-shadow: 0 5px 0 #1976d2; margin: 10px; }
-        .btn-main { background: #ff9800; color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 5px 0 #e68a00; }
+        .btn-main { background: #ff9800; color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 5px 0 #e68a00; transition: 0.2s; }
+        .btn-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #e68a00; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; padding: 20px; }
-        .progress-bar { width: 100%; height: 20px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 2px solid #4caf50; }
-        .progress-fill { height: 100%; background: #4caf50; width: 0%; transition: 0.4s; }
-        #question-box { background: #f0fdf4; padding: 20px; border-radius: 15px; border: 2px dashed #4caf50; margin-bottom: 15px; font-weight: bold; line-height: 1.4; color: #333; }
-        #plant-img { max-height: 220px; transition: 0.5s ease; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        .input-field { width: 80%; padding: 12px; border-radius: 10px; border: 2px solid #4caf50; text-align: center; font-family: 'Poppins'; margin-bottom: 15px; font-size: 1.1rem; outline: none; }
+        .timer-bar { width: 100%; height: 12px; background: #eee; border-radius: 6px; margin: 15px 0; overflow: hidden; border: 1px solid #4caf50; }
+        #timer-fill { height: 100%; background: #ff4757; width: 100%; transition: 0.1s linear; }
+        #plant-display { height: 200px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 20px; }
+        #plant-img { max-height: 100%; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; text-align: center; padding: 20px;">
+    <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; text-align: center;">
         <h1 style="color: #4caf50;">🌱 Plant Quest</h1>
-        <p>Gunakan pengetahuanmu untuk menanam pohon!</p>
-        <input type="text" id="playerName" style="padding:15px; border-radius:15px; border:2px solid #ddd; width:80%; max-width: 300px; margin-bottom:20px; text-align:center; font-family: 'Poppins';" placeholder="Nama Pekebun...">
-        <button class="btn-main" onclick="startGame()">MULAI BERKEBUN</button>
+        <p>Taklukkan 3 tantangan berkebun yang berbeda!</p>
+        <input type="text" id="playerName" class="input-field" placeholder="Nama Pekebun...">
+        <button class="btn-main" onclick="startGame()">MULAI</button>
     </div>
 
     <div class="game-container">
-        <div class="level-badge" id="levelLabel">LEVEL 1: KUIS</div>
-        <div class="stats">
+        <div class="level-badge" id="levelLabel">LEVEL 1</div>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; margin-bottom: 10px;">
             <span id="displayName"></span>
             <span id="heartsContainer">❤️❤️❤️</span>
         </div>
-        
-        <div id="quiz-area">
-            <div id="question-box"> Memuat soal... </div>
+
+        <div id="area-lvl1">
+            <div id="question-box" style="background:#f0fdf4; padding:15px; border-radius:15px; margin-bottom:15px; font-weight:bold; color:#333; min-height: 60px;"></div>
             <div id="options-area"></div>
         </div>
 
-        <div id="care-area" style="display: none;">
-            <div style="height: 230px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 10px;">
-                <img id="plant-img" src="tunas.png">
-            </div>
-            <div id="status-text" style="font-weight: bold;">Tunas butuh perhatian...</div>
-            <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-            <button class="btn-care" onclick="waterPlant()" style="margin-top: 20px;">SIRAM AIR 💧</button>
+        <div id="area-lvl2" style="display:none;">
+            <div id="plant-display"><img src="pohon_kecil.png" id="plant-img-lvl2"></div>
+            <p id="hint-box" style="font-weight:bold; color:#333; margin-bottom:15px;"></p>
+            <input type="text" id="typeAnswer" class="input-field" placeholder="Ketik di sini..." autocomplete="off">
+            <button class="btn-main" style="font-size:1rem; padding:12px 30px;" onclick="checkTypeAnswer()">KIRIM</button>
+        </div>
+
+        <div id="area-lvl3" style="display:none;">
+            <div id="plant-display"><img id="plant-img-lvl3" src="pohon_besar.png"></div>
+            <p style="font-weight:bold; color: #333;">SIRAM SECEPATNYA! (30 Klik)</p>
+            <div class="timer-bar"><div id="timer-fill"></div></div>
+            <button class="btn-main" id="waterBtn" onclick="clickWater()">SIRAM 💧 (<span id="clickCount">0</span>)</button>
         </div>
     </div>
 
     <div class="overlay" id="levelUpScreen">
         <h1 style="color: #ffeb3b;">LEVEL SELESAI! 🆙</h1>
-        <p id="levelUpMsg">Tanamanmu mulai berkembang!</p>
+        <p>Tanamanmu tumbuh semakin kuat!</p>
         <button class="btn-main" onclick="nextLevel()">LANJUT</button>
     </div>
-
     <div class="overlay" id="winScreen">
-        <h1 style="color: #4caf50; font-size: 2.5rem;">MASTER GARDENER! 🏆</h1>
-        <p>Kamu hebat! Semua level telah tuntas.</p>
+        <h1 style="color: #4caf50; font-size: 2.5rem;">PEKEBUN SEJATI! 🏆</h1>
+        <p>Selamat! Pohonmu telah mekar sempurna.</p>
         <button class="btn-main" onclick="location.reload()">MAIN LAGI</button>
     </div>
-
     <div class="overlay" id="loseScreen">
-        <h1 style="color: #ff4757; font-size: 2.5rem;">GAME OVER 😭</h1>
+        <h1 style="color: #ff4757; font-size: 2.5rem;">TANAMAN LAYU 😭</h1>
         <button class="btn-main" onclick="location.reload()">COBA LAGI</button>
     </div>
 
-    <audio id="bgm" src="bgm_game.m4a" loop preload="auto"></audio>
+    <audio id="bgm" src="bgm_game.m4a" loop></audio>
     <audio id="sfxCorrect" src="correct_sound.m4a"></audio>
     <audio id="sfxWrong" src="wrong_sound.m4a"></audio>
+    <audio id="sfxType" src="typing_sound.m4a"></audio>
+    <audio id="sfxWater" src="water_splash.m4a"></audio>
     <audio id="sfxWin" src="win_sound.m4a"></audio>
     <audio id="sfxLose" src="lose_sound.m4a"></audio>
 
     <script>
-        let currentLevel = 1, currentQ = 0, growth = 0, lives = 3;
-        const questions = [
+        let currentLevel = 1, currentQ = 0, lives = 3, clicks = 0, timerInterval;
+        
+        const qLvl1 = [
             { q: "Apa yang dibutuhkan tumbuhan untuk fotosintesis?", c: ["Oksigen", "Cahaya Matahari", "Susu"], a: 1 },
-            { q: "Bagian tumbuhan yang menyerap air adalah...", c: ["Daun", "Batang", "Akar"], a: 2 },
-            { q: "Zat hijau pada daun disebut...", c: ["Klorofil", "Oksigen", "Karbon"], a: 0 },
-            { q: "Tumbuhan bernapas menghirup...", c: ["Karbondioksida", "Nitrogen", "Besi"], a: 0 },
-            { q: "Tempat tumbuhan memasak makanannya sendiri...", c: ["Akar", "Bunga", "Daun"], a: 2 },
-            { q: "Tumbuhan yang menyimpan air di batangnya...", c: ["Padi", "Kaktus", "Mawar"], a: 1 },
-            { q: "Gas yang dihasilkan tumbuhan untuk manusia...", c: ["Oksigen", "Batu", "Tanah"], a: 0 },
-            { q: "Bunga berfungsi sebagai alat...", c: ["Pernapasan", "Perkembangbiakan", "Gerak"], a: 1 },
-            { q: "Tumbuhan pemakan serangga...", c: ["Kantong Semar", "Mangga", "Melati"], a: 0 },
-            { q: "Akar pohon beringin yang menggantung...", c: ["Tunggang", "Gantung", "Serabut"], a: 1 }
+            { q: "Bagian tumbuhan yang menyerap air adalah?", c: ["Daun", "Batang", "Akar"], a: 2 },
+            { q: "Zat hijau pada daun disebut?", c: ["Klorofil", "Oksigen", "Tanah"], a: 0 },
+            { q: "Tumbuhan bernapas menghirup?", c: ["Karbon Dioksida", "Nitrogen", "Besi"], a: 0 },
+            { q: "Akar pohon beringin yang menggantung?", c: ["Tunggang", "Gantung", "Serabut"], a: 1 }
+        ];
+
+        const qLvl2 = [
+            { q: "Proses memasak makanan tumbuhan?", a: "fotosintesis" },
+            { q: "Hasil fotosintesis yang kita hirup?", a: "oksigen" },
+            { q: "Tumbuhan yang menyimpan air di batang?", a: "kaktus" },
+            { q: "Tempat memasak makanan tumbuhan?", a: "daun" },
+            { q: "Tumbuhan pemakan serangga?", a: "kantong semar" }
         ];
 
         function startGame() {
-            const nameInput = document.getElementById('playerName').value;
-            if(!nameInput.trim()) return;
-            
+            const name = document.getElementById('playerName').value;
+            if(!name.trim()) return;
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('displayName').innerText = "👨‍🌾 " + nameInput;
-            
-            const music = document.getElementById('bgm');
-            music.play().catch(() => {
-                document.body.addEventListener('click', () => music.play(), { once: true });
-            });
+            document.getElementById('displayName').innerText = "👨‍🌾 " + name;
+            document.getElementById('bgm').play().catch(() => {});
             loadLevel();
         }
 
         function loadLevel() {
-            if(currentLevel === 1) {
-                document.getElementById('quiz-area').style.display = 'block';
-                document.getElementById('care-area').style.display = 'none';
-                showQuestion();
-            } else {
-                document.getElementById('quiz-area').style.display = 'none';
-                document.getElementById('care-area').style.display = 'block';
-                growth = 0;
-                updateCareUI();
+            lives = 3; updateHearts();
+            if(currentLevel === 1) { showLvl1(); }
+            else if(currentLevel === 2) { 
+                document.getElementById('area-lvl1').style.display = 'none';
+                document.getElementById('area-lvl2').style.display = 'block';
+                showLvl2(); 
+            }
+            else { 
+                document.getElementById('area-lvl2').style.display = 'none';
+                document.getElementById('area-lvl3').style.display = 'block';
+                showLvl3(); 
             }
         }
 
-        function showQuestion() {
-            const q = questions[currentQ];
-            document.getElementById('question-box').innerText = (currentQ + 1) + ". " + q.q;
-            const options = document.getElementById('options-area');
-            options.innerHTML = "";
-            q.c.forEach((choice, index) => {
+        function showLvl1() {
+            document.getElementById('levelLabel').innerText = "LEVEL 1: PILIHAN GANDA";
+            const q = qLvl1[currentQ];
+            document.getElementById('question-box').innerText = q.q;
+            const optArea = document.getElementById('options-area');
+            optArea.innerHTML = "";
+            q.c.forEach((choice, i) => {
                 let btn = document.createElement("button");
                 btn.className = "btn-choice";
                 btn.innerText = choice;
-                btn.onclick = () => checkQuiz(index);
-                options.appendChild(btn);
+                btn.onclick = () => {
+                    if(i === q.a) {
+                        document.getElementById('sfxCorrect').play();
+                        currentQ++;
+                        if(currentQ < qLvl1.length) showLvl1();
+                        else finishLevel();
+                    } else fail();
+                };
+                optArea.appendChild(btn);
             });
         }
 
-        function checkQuiz(idx) {
-            if(idx === questions[currentQ].a) {
+        function showLvl2() {
+            document.getElementById('levelLabel').innerText = "LEVEL 2: TEBAK KATA";
+            document.getElementById('hint-box').innerText = qLvl2[currentQ].q;
+            document.getElementById('typeAnswer').focus();
+        }
+
+        function checkTypeAnswer() {
+            const ans = document.getElementById('typeAnswer').value.toLowerCase().trim();
+            if(ans === qLvl2[currentQ].a) {
                 document.getElementById('sfxCorrect').play();
                 currentQ++;
-                if(currentQ < questions.length) showQuestion();
-                else document.getElementById('levelUpScreen').style.display = 'flex';
-            } else {
-                document.getElementById('sfxWrong').play();
-                lives--;
-                updateHearts();
-                if(lives <= 0) {
+                document.getElementById('typeAnswer').value = "";
+                if(currentQ < qLvl2.length) showLvl2();
+                else finishLevel();
+            } else { fail(); document.getElementById('typeAnswer').value = ""; }
+        }
+
+        function showLvl3() {
+            document.getElementById('levelLabel').innerText = "LEVEL 3: SIRAM CEPAT";
+            let timeLeft = 100;
+            timerInterval = setInterval(() => {
+                timeLeft -= 1.25;
+                document.getElementById('timer-fill').style.width = timeLeft + "%";
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
                     document.getElementById('bgm').pause();
                     document.getElementById('sfxLose').play();
                     document.getElementById('loseScreen').style.display = 'flex';
                 }
-            }
+            }, 100); 
         }
 
-        function waterPlant() {
-            let power = currentLevel === 2 ? 10 : 5;
-            growth += power;
-            document.getElementById('sfxCorrect').play();
+        function clickWater() {
+            clicks++;
+            document.getElementById('sfxWater').currentTime = 0;
+            document.getElementById('sfxWater').play();
+            document.getElementById('clickCount').innerText = clicks;
+            const img = document.getElementById('plant-img-lvl3');
+            img.style.transform = "scale(1.1) rotate(5deg)";
+            setTimeout(() => img.style.transform = "scale(1) rotate(0deg)", 50);
             
-            const img = document.getElementById('plant-img');
-            img.style.transform = "scale(1.1)";
-            setTimeout(() => img.style.transform = "scale(1)", 100);
-
-            if(growth >= 100) {
-                growth = 100;
-                updateCareUI();
-                setTimeout(() => document.getElementById('levelUpScreen').style.display = 'flex', 500);
-            } else updateCareUI();
-        }
-
-        function updateCareUI() {
-            document.getElementById('progress').style.width = growth + "%";
-            const img = document.getElementById('plant-img');
-            const status = document.getElementById('status-text');
-            if(growth >= 70) { 
-                img.src = "pohon_besar.png"; 
-                status.innerText = "Pohon rimbun dan sehat!"; 
-            } else if(growth >= 30) { 
-                img.src = "pohon_kecil.png"; 
-                status.innerText = "Tumbuhan semakin besar!"; 
-            } else { 
-                img.src = "tunas.png"; 
-                status.innerText = "Butuh siraman air..."; 
-            }
-        }
-
-        function nextLevel() {
-            currentLevel++;
-            lives = 3;
-            updateHearts();
-            document.getElementById('levelUpScreen').style.display = 'none';
-            if(currentLevel > 3) {
+            if(clicks >= 30) {
+                clearInterval(timerInterval);
                 document.getElementById('bgm').pause();
                 document.getElementById('sfxWin').play();
                 document.getElementById('winScreen').style.display = 'flex';
-            } else {
-                document.getElementById('levelLabel').innerText = "LEVEL " + currentLevel;
-                loadLevel();
             }
         }
 
-        function updateHearts() {
-            document.getElementById('heartsContainer').innerText = "❤️".repeat(lives);
+        function finishLevel() {
+            document.getElementById('levelUpScreen').style.display = 'flex';
         }
+
+        function nextLevel() {
+            currentLevel++; currentQ = 0;
+            document.getElementById('levelUpScreen').style.display = 'none';
+            loadLevel();
+        }
+
+        function fail() {
+            document.getElementById('sfxWrong').play();
+            lives--; updateHearts();
+            if(lives <= 0) {
+                document.getElementById('bgm').pause();
+                document.getElementById('sfxLose').play();
+                document.getElementById('loseScreen').style.display = 'flex';
+            }
+        }
+
+        function updateHearts() { document.getElementById('heartsContainer').innerText = "❤️".repeat(lives); }
+
+        document.getElementById('typeAnswer').addEventListener('input', () => {
+            document.getElementById('sfxType').currentTime = 0;
+            document.getElementById('sfxType').play();
+        });
     </script>
 </body>
 </html>
