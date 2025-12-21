@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Quest: 3 Levels 🌿</title>
+    <title>Plant Quest: 3 Levels Journey 🌿</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -40,13 +40,14 @@
         .progress-bar { width: 100%; height: 20px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 2px solid #4caf50; }
         .progress-fill { height: 100%; background: #4caf50; width: 0%; transition: 0.4s; }
         #question-box { background: #f0fdf4; padding: 20px; border-radius: 15px; border: 2px dashed #4caf50; margin-bottom: 15px; font-weight: bold; line-height: 1.4; color: #333; }
+        #plant-img { max-height: 220px; transition: 0.5s ease; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
     </style>
 </head>
 <body>
 
     <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; text-align: center; padding: 20px;">
         <h1 style="color: #4caf50;">🌱 Plant Quest</h1>
-        <p>Selesaikan Level 1 Kuis untuk mulai menanam!</p>
+        <p>Gunakan pengetahuanmu untuk menanam pohon!</p>
         <input type="text" id="playerName" style="padding:15px; border-radius:15px; border:2px solid #ddd; width:80%; max-width: 300px; margin-bottom:20px; text-align:center; font-family: 'Poppins';" placeholder="Nama Pekebun...">
         <button class="btn-main" onclick="startGame()">MULAI BERKEBUN</button>
     </div>
@@ -64,10 +65,10 @@
         </div>
 
         <div id="care-area" style="display: none;">
-            <div style="height: 220px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 10px;">
-                <img id="plant-img" src="tunas.png" style="max-height: 100%; transition: 0.3s;">
+            <div style="height: 230px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 10px;">
+                <img id="plant-img" src="tunas.png">
             </div>
-            <div id="status-text" style="font-weight: bold;">Butuh air...</div>
+            <div id="status-text" style="font-weight: bold;">Tunas butuh perhatian...</div>
             <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
             <button class="btn-care" onclick="waterPlant()" style="margin-top: 20px;">SIRAM AIR 💧</button>
         </div>
@@ -75,11 +76,13 @@
 
     <div class="overlay" id="levelUpScreen">
         <h1 style="color: #ffeb3b;">LEVEL SELESAI! 🆙</h1>
+        <p id="levelUpMsg">Tanamanmu mulai berkembang!</p>
         <button class="btn-main" onclick="nextLevel()">LANJUT</button>
     </div>
 
     <div class="overlay" id="winScreen">
         <h1 style="color: #4caf50; font-size: 2.5rem;">MASTER GARDENER! 🏆</h1>
+        <p>Kamu hebat! Semua level telah tuntas.</p>
         <button class="btn-main" onclick="location.reload()">MAIN LAGI</button>
     </div>
 
@@ -91,6 +94,8 @@
     <audio id="bgm" src="bgm_game.m4a" loop preload="auto"></audio>
     <audio id="sfxCorrect" src="correct_sound.m4a"></audio>
     <audio id="sfxWrong" src="wrong_sound.m4a"></audio>
+    <audio id="sfxWin" src="win_sound.m4a"></audio>
+    <audio id="sfxLose" src="lose_sound.m4a"></audio>
 
     <script>
         let currentLevel = 1, currentQ = 0, growth = 0, lives = 3;
@@ -108,12 +113,15 @@
         ];
 
         function startGame() {
-            const name = document.getElementById('playerName').value;
-            if(!name.trim()) return;
+            const nameInput = document.getElementById('playerName').value;
+            if(!nameInput.trim()) return;
+            
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('displayName').innerText = "👨‍🌾 " + name;
-            document.getElementById('bgm').play().catch(() => {
-                document.body.addEventListener('click', () => document.getElementById('bgm').play(), { once: true });
+            document.getElementById('displayName').innerText = "👨‍🌾 " + nameInput;
+            
+            const music = document.getElementById('bgm');
+            music.play().catch(() => {
+                document.body.addEventListener('click', () => music.play(), { once: true });
             });
             loadLevel();
         }
@@ -155,7 +163,11 @@
                 document.getElementById('sfxWrong').play();
                 lives--;
                 updateHearts();
-                if(lives <= 0) document.getElementById('loseScreen').style.display = 'flex';
+                if(lives <= 0) {
+                    document.getElementById('bgm').pause();
+                    document.getElementById('sfxLose').play();
+                    document.getElementById('loseScreen').style.display = 'flex';
+                }
             }
         }
 
@@ -163,6 +175,11 @@
             let power = currentLevel === 2 ? 10 : 5;
             growth += power;
             document.getElementById('sfxCorrect').play();
+            
+            const img = document.getElementById('plant-img');
+            img.style.transform = "scale(1.1)";
+            setTimeout(() => img.style.transform = "scale(1)", 100);
+
             if(growth >= 100) {
                 growth = 100;
                 updateCareUI();
@@ -173,9 +190,17 @@
         function updateCareUI() {
             document.getElementById('progress').style.width = growth + "%";
             const img = document.getElementById('plant-img');
-            if(growth >= 70) img.src = "pohon_besar.png";
-            else if(growth >= 30) img.src = "pohon_kecil.png";
-            else img.src = "tunas.png";
+            const status = document.getElementById('status-text');
+            if(growth >= 70) { 
+                img.src = "pohon_besar.png"; 
+                status.innerText = "Pohon rimbun dan sehat!"; 
+            } else if(growth >= 30) { 
+                img.src = "pohon_kecil.png"; 
+                status.innerText = "Tumbuhan semakin besar!"; 
+            } else { 
+                img.src = "tunas.png"; 
+                status.innerText = "Butuh siraman air..."; 
+            }
         }
 
         function nextLevel() {
@@ -183,8 +208,11 @@
             lives = 3;
             updateHearts();
             document.getElementById('levelUpScreen').style.display = 'none';
-            if(currentLevel > 3) document.getElementById('winScreen').style.display = 'flex';
-            else {
+            if(currentLevel > 3) {
+                document.getElementById('bgm').pause();
+                document.getElementById('sfxWin').play();
+                document.getElementById('winScreen').style.display = 'flex';
+            } else {
                 document.getElementById('levelLabel').innerText = "LEVEL " + currentLevel;
                 loadLevel();
             }
