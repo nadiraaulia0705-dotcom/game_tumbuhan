@@ -6,14 +6,35 @@
     <title>Plant Quest: 3 Levels 🌿</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #e8f5e9 url('game_bg_tumbuhan.jpg') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #2e7d32; overflow: hidden; }
-        .game-container { background: rgba(255, 255, 255, 0.95); border-radius: 30px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 90%; max-width: 450px; text-align: center; border: 5px solid #4caf50; position: relative; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #e8f5e9 url('game_bg.jpg') no-repeat center center fixed; 
+            background-size: cover; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            color: #2e7d32; 
+            overflow: hidden; 
+        }
+        .game-container { 
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 30px; 
+            padding: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+            width: 90%; 
+            max-width: 450px; 
+            text-align: center; 
+            border: 5px solid #4caf50; 
+            position: relative; 
+            backdrop-filter: blur(5px);
+        }
         .stats { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; font-size: 0.9rem; }
         .level-badge { background: #4caf50; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-size: 0.8rem; margin-bottom: 15px; font-weight: bold; }
         .btn-choice { background: #fff; border: 2px solid #4caf50; color: #2e7d32; padding: 12px; margin: 8px 0; width: 100%; border-radius: 12px; cursor: pointer; font-family: 'Poppins'; font-weight: bold; transition: 0.2s; text-align: left; }
         .btn-choice:hover { background: #e8f5e9; transform: scale(1.02); }
         .btn-care { background: #2196f3; color: white; border: none; padding: 15px 35px; border-radius: 50px; font-size: 1.1rem; cursor: pointer; font-weight: bold; box-shadow: 0 5px 0 #1976d2; margin: 10px; }
-        .btn-care:active { transform: translateY(4px); box-shadow: none; }
         .btn-main { background: #ff9800; color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 5px 0 #e68a00; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; padding: 20px; }
         .progress-bar { width: 100%; height: 20px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 2px solid #4caf50; }
@@ -25,7 +46,7 @@
 
     <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; text-align: center; padding: 20px;">
         <h1 style="color: #4caf50;">🌱 Plant Quest</h1>
-        <p>Selesaikan 3 Level untuk menang!</p>
+        <p>Selesaikan Level 1 Kuis untuk mulai menanam!</p>
         <input type="text" id="playerName" style="padding:15px; border-radius:15px; border:2px solid #ddd; width:80%; max-width: 300px; margin-bottom:20px; text-align:center; font-family: 'Poppins';" placeholder="Nama Pekebun...">
         <button class="btn-main" onclick="startGame()">MULAI BERKEBUN</button>
     </div>
@@ -46,21 +67,19 @@
             <div style="height: 220px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 10px;">
                 <img id="plant-img" src="tunas.png" style="max-height: 100%; transition: 0.3s;">
             </div>
-            <div id="status-text" style="font-weight: bold;">Tunas butuh air...</div>
+            <div id="status-text" style="font-weight: bold;">Butuh air...</div>
             <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
             <button class="btn-care" onclick="waterPlant()" style="margin-top: 20px;">SIRAM AIR 💧</button>
         </div>
     </div>
 
     <div class="overlay" id="levelUpScreen">
-        <h1 style="color: #ffeb3b;">LEVEL CLEAR! 🆙</h1>
-        <p id="levelUpMsg">Hebat! Lanjut ke tahap berikutnya.</p>
+        <h1 style="color: #ffeb3b;">LEVEL SELESAI! 🆙</h1>
         <button class="btn-main" onclick="nextLevel()">LANJUT</button>
     </div>
 
     <div class="overlay" id="winScreen">
         <h1 style="color: #4caf50; font-size: 2.5rem;">MASTER GARDENER! 🏆</h1>
-        <p>Tumbuhanmu sudah mekar sempurna!</p>
         <button class="btn-main" onclick="location.reload()">MAIN LAGI</button>
     </div>
 
@@ -74,11 +93,7 @@
     <audio id="sfxWrong" src="wrong_sound.m4a"></audio>
 
     <script>
-        let currentLevel = 1;
-        let currentQ = 0;
-        let growth = 0;
-        let lives = 3;
-        
+        let currentLevel = 1, currentQ = 0, growth = 0, lives = 3;
         const questions = [
             { q: "Apa yang dibutuhkan tumbuhan untuk fotosintesis?", c: ["Oksigen", "Cahaya Matahari", "Susu"], a: 1 },
             { q: "Bagian tumbuhan yang menyerap air adalah...", c: ["Daun", "Batang", "Akar"], a: 2 },
@@ -94,15 +109,11 @@
 
         function startGame() {
             const name = document.getElementById('playerName').value;
-            if(!name.trim()) return alert("Isi nama dulu!");
-            
+            if(!name.trim()) return;
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('displayName').innerText = "👨‍🌾 " + name;
-            
-            // Putar BGM (bgm_game.m4a)
-            const music = document.getElementById('bgm');
-            music.play().catch(() => {
-                document.body.addEventListener('click', () => music.play(), { once: true });
+            document.getElementById('bgm').play().catch(() => {
+                document.body.addEventListener('click', () => document.getElementById('bgm').play(), { once: true });
             });
             loadLevel();
         }
@@ -149,15 +160,9 @@
         }
 
         function waterPlant() {
-            // Level 2 butuh 10 klik, Level 3 butuh 20 klik
             let power = currentLevel === 2 ? 10 : 5;
             growth += power;
             document.getElementById('sfxCorrect').play();
-            
-            const img = document.getElementById('plant-img');
-            img.style.transform = "scale(1.1)";
-            setTimeout(() => img.style.transform = "scale(1)", 100);
-
             if(growth >= 100) {
                 growth = 100;
                 updateCareUI();
@@ -168,15 +173,14 @@
         function updateCareUI() {
             document.getElementById('progress').style.width = growth + "%";
             const img = document.getElementById('plant-img');
-            const status = document.getElementById('status-text');
-            if(growth >= 70) { img.src = "pohon_besar.png"; status.innerText = "Pohon mekar sempurna!"; }
-            else if(growth >= 30) { img.src = "pohon_kecil.png"; status.innerText = "Tumbuhan membesar!"; }
-            else { img.src = "tunas.png"; status.innerText = "Siram air agar tumbuh..."; }
+            if(growth >= 70) img.src = "pohon_besar.png";
+            else if(growth >= 30) img.src = "pohon_kecil.png";
+            else img.src = "tunas.png";
         }
 
         function nextLevel() {
             currentLevel++;
-            lives = 3; // Nyawa reset jadi 3 tiap naik level
+            lives = 3;
             updateHearts();
             document.getElementById('levelUpScreen').style.display = 'none';
             if(currentLevel > 3) document.getElementById('winScreen').style.display = 'flex';
