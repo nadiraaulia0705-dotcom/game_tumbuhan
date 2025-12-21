@@ -43,9 +43,9 @@
         </div>
 
         <div id="area-lvl2" style="display:none;">
-            <div id="plant-display"><img src="pohon_kecil.png" id="plant-img-lvl2"></div>
+            <div id="plant-display"><img src="pohon_kecil.png"></div>
             <p id="hint-box" style="font-weight:bold; color:#333; margin-bottom:15px;"></p>
-            <input type="text" id="typeAnswer" class="input-field" placeholder="Ketik di sini..." autocomplete="off">
+            <input type="text" id="typeAnswer" class="input-field" placeholder="Ketik jawaban..." autocomplete="off">
             <button class="btn-main" style="font-size:1rem; padding:12px 30px;" onclick="checkTypeAnswer()">KIRIM</button>
         </div>
 
@@ -59,12 +59,10 @@
 
     <div class="overlay" id="levelUpScreen">
         <h1 style="color: #ffeb3b;">LEVEL SELESAI! 🆙</h1>
-        <p>Tanamanmu tumbuh semakin kuat!</p>
         <button class="btn-main" onclick="nextLevel()">LANJUT</button>
     </div>
     <div class="overlay" id="winScreen">
         <h1 style="color: #4caf50; font-size: 2.5rem;">PEKEBUN SEJATI! 🏆</h1>
-        <p>Selamat! Pohonmu telah mekar sempurna.</p>
         <button class="btn-main" onclick="location.reload()">MAIN LAGI</button>
     </div>
     <div class="overlay" id="loseScreen">
@@ -104,7 +102,7 @@
             if(!name.trim()) return;
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('displayName').innerText = "👨‍🌾 " + name;
-            document.getElementById('bgm').play().catch(() => {});
+            document.getElementById('bgm').play();
             loadLevel();
         }
 
@@ -166,7 +164,7 @@
             document.getElementById('levelLabel').innerText = "LEVEL 3: SIRAM CEPAT";
             let timeLeft = 100;
             timerInterval = setInterval(() => {
-                timeLeft -= 1.25;
+                timeLeft -= 1.25; // 8 detik total
                 document.getElementById('timer-fill').style.width = timeLeft + "%";
                 if(timeLeft <= 0) {
                     clearInterval(timerInterval);
