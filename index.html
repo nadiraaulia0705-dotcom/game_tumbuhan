@@ -15,16 +15,17 @@
         .btn-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #e68a00; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; padding: 20px; }
         .input-field { width: 80%; padding: 12px; border-radius: 10px; border: 2px solid #4caf50; text-align: center; font-family: 'Poppins'; margin-bottom: 15px; font-size: 1.1rem; outline: none; }
-        #plant-display { height: 200px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 20px; }
+        #plant-display { height: 180px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 10px; }
+        #plant-img { max-height: 100%; transition: 0.4s; }
     </style>
 </head>
 <body>
 
     <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; text-align: center;">
         <h1 style="color: #4caf50;">🌱 Plant Quest</h1>
-        <p>Taklukkan 3 level kuis tumbuhan!</p>
+        <p>Gunakan pengetahuanmu untuk menanam pohon!</p>
         <input type="text" id="playerName" class="input-field" placeholder="Nama Pekebun...">
-        <button class="btn-main" onclick="startGame()">MULAI</button>
+        <button class="btn-main" onclick="startGame()">MULAI GAME</button>
     </div>
 
     <div class="game-container">
@@ -40,10 +41,10 @@
         </div>
 
         <div id="area-lvl2" style="display:none;">
-            <div id="plant-display"><img src="pohon_kecil.png" style="max-height: 100%;"></div>
+            <div id="plant-display"><img id="plant-img-lvl2" src="pohon_kecil.png"></div>
             <p id="hint-box" style="font-weight:bold; color:#333; margin-bottom:15px;"></p>
             <input type="text" id="typeAnswer" class="input-field" placeholder="Ketik jawaban..." autocomplete="off">
-            <button class="btn-main" style="font-size:1rem; padding:12px 30px;" onclick="checkTypeAnswer()">KIRIM</button>
+            <button class="btn-main" style="font-size:1rem; padding:10px 25px;" onclick="checkTypeAnswer()">KIRIM</button>
         </div>
     </div>
 
@@ -52,18 +53,19 @@
         <button class="btn-main" onclick="nextLevel()">LANJUT</button>
     </div>
     <div class="overlay" id="winScreen">
-        <h1 style="color: #4caf50; font-size: 2.5rem;">PEKEBUN SEJATI! 🏆</h1>
+        <h1 style="color: #4caf50; font-size: 2.5rem;">MASTER GARDENER! 🏆</h1>
         <button class="btn-main" onclick="location.reload()">MAIN LAGI</button>
     </div>
     <div class="overlay" id="loseScreen">
-        <h1 style="color: #ff4757; font-size: 2.5rem;">TANAMAN LAYU 😭</h1>
+        <h1 style="color: #ff4757; font-size: 2.5rem;">GAGAL 😭</h1>
+        <p>Jawabanmu kurang tepat. Ayo coba lagi!</p>
         <button class="btn-main" onclick="location.reload()">COBA LAGI</button>
     </div>
 
     <audio id="bgm" src="bgm_game.m4a" loop></audio>
     <audio id="sfxCorrect" src="correct_sound.m4a"></audio>
     <audio id="sfxWrong" src="wrong_sound.m4a"></audio>
-    <audio id="sfxType" src="typing_sound.m4a"></audio>
+    <audio id="sfxType" src="typing_sound.m4a" preload="auto"></audio>
     <audio id="sfxWin" src="win_sound.m4a"></audio>
     <audio id="sfxLose" src="lose_sound.m4a"></audio>
 
@@ -79,19 +81,19 @@
         ];
 
         const qLvl2 = [
-            { q: "Proses memasak makanan tumbuhan?", a: "fotosintesis" },
-            { q: "Hasil fotosintesis yang kita hirup?", a: "oksigen" },
-            { q: "Tumbuhan yang menyimpan air di batang?", a: "kaktus" },
-            { q: "Tempat memasak makanan tumbuhan?", a: "daun" },
+            { q: "Proses memasak makanan tumbuhan disebut?", a: "fotosintesis" },
+            { q: "Hasil fotosintesis yang dihirup manusia?", a: "oksigen" },
+            { q: "Tumbuhan yang menyimpan air di batang (daun berduri)?", a: "kaktus" },
+            { q: "Tempat memasak makanan pada tumbuhan?", a: "daun" },
             { q: "Tumbuhan pemakan serangga?", a: "kantong semar" }
         ];
 
         const qLvl3 = [
-            { q: "Aku bunga yang selalu mengikuti arah matahari. Siapakah aku?", c: ["Mawar", "Matahari", "Melati"], a: 1 },
-            { q: "Aku tumbuhan yang menutup daun saat disentuh. Aku adalah...", c: ["Putri Malu", "Rumput", "Cemara"], a: 0 },
-            { q: "Aku buah yang kulitnya berduri tapi dalamnya manis. Aku adalah...", c: ["Nanas", "Durian", "Salak"], a: 1 },
-            { q: "Aku dikenal sebagai 'Emas Hijau' karena bermanfaat. Tumbuhan apa aku?", c: ["Padi", "Bambu", "Kelapa"], a: 2 },
-            { q: "Tumbuhan yang akarnya bisa menembus tembok?", c: ["Beringin", "Lumut", "Parasit"], a: 0 }
+            { q: "Bunga yang selalu menghadap arah matahari?", c: ["Mawar", "Matahari", "Melati"], a: 1 },
+            { q: "Tumbuhan yang menutup daun saat disentuh?", c: ["Putri Malu", "Rumput", "Cemara"], a: 0 },
+            { q: "Buah yang kulitnya berduri dan baunya menyengat?", c: ["Nanas", "Durian", "Salak"], a: 1 },
+            { q: "Tumbuhan yang akarnya bisa menembus tembok bangunan?", c: ["Beringin", "Lumut", "Parasit"], a: 0 },
+            { q: "Pohon yang dikenal sebagai pohon kehidupan di gurun?", c: ["Pinus", "Kurma", "Bambu"], a: 1 }
         ];
 
         function startGame() {
@@ -104,19 +106,16 @@
         }
 
         function loadLevel() {
-            lives = 3; 
-            updateHearts();
+            lives = 3; updateHearts();
             if(currentLevel === 1) { 
                 document.getElementById('area-quiz').style.display = 'block';
                 document.getElementById('area-lvl2').style.display = 'none';
                 showQuiz(qLvl1, "LEVEL 1: PILIHAN GANDA"); 
-            }
-            else if(currentLevel === 2) { 
+            } else if(currentLevel === 2) { 
                 document.getElementById('area-quiz').style.display = 'none';
                 document.getElementById('area-lvl2').style.display = 'block';
                 showLvl2(); 
-            }
-            else { 
+            } else { 
                 document.getElementById('area-quiz').style.display = 'block';
                 document.getElementById('area-lvl2').style.display = 'none';
                 showQuiz(qLvl3, "LEVEL 3: TEKA-TEKI SULIT"); 
@@ -126,7 +125,7 @@
         function showQuiz(questions, label) {
             document.getElementById('levelLabel').innerText = label;
             const q = questions[currentQ];
-            document.getElementById('question-box').innerText = q.q;
+            document.getElementById('question-box').innerText = (currentQ+1) + ". " + q.q;
             const optArea = document.getElementById('options-area');
             optArea.innerHTML = "";
             q.c.forEach((choice, i) => {
@@ -147,7 +146,7 @@
 
         function showLvl2() {
             document.getElementById('levelLabel').innerText = "LEVEL 2: TEBAK KATA";
-            document.getElementById('hint-box').innerText = qLvl2[currentQ].q;
+            document.getElementById('hint-box').innerText = (currentQ+1) + ". " + qLvl2[currentQ].q;
             document.getElementById('typeAnswer').focus();
         }
 
@@ -173,16 +172,14 @@
         }
 
         function nextLevel() {
-            currentLevel++; 
-            currentQ = 0;
+            currentLevel++; currentQ = 0;
             document.getElementById('levelUpScreen').style.display = 'none';
             loadLevel();
         }
 
         function fail() {
             document.getElementById('sfxWrong').play();
-            lives--; 
-            updateHearts();
+            lives--; updateHearts();
             if(lives <= 0) {
                 document.getElementById('bgm').pause();
                 document.getElementById('sfxLose').play();
@@ -190,13 +187,14 @@
             }
         }
 
-        function updateHearts() { 
-            document.getElementById('heartsContainer').innerText = "❤️".repeat(lives); 
-        }
+        function updateHearts() { document.getElementById('heartsContainer').innerText = "❤️".repeat(lives); }
 
+        // PERBAIKAN SOUND KETIK (INSTAN)
         document.getElementById('typeAnswer').addEventListener('input', () => {
-            document.getElementById('sfxType').currentTime = 0;
-            document.getElementById('sfxType').play();
+            const sound = document.getElementById('sfxType');
+            sound.pause();
+            sound.currentTime = 0;
+            sound.play().catch(() => {});
         });
     </script>
 </body>
