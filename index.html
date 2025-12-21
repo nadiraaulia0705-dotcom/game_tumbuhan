@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Quest: 3 Unique Levels 🌿</title>
+    <title>Plant Quest: 3 Levels 🌿</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #e8f5e9 url('game_bg.jpg') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #2e7d32; overflow: hidden; }
@@ -15,17 +15,14 @@
         .btn-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #e68a00; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; padding: 20px; }
         .input-field { width: 80%; padding: 12px; border-radius: 10px; border: 2px solid #4caf50; text-align: center; font-family: 'Poppins'; margin-bottom: 15px; font-size: 1.1rem; outline: none; }
-        .timer-bar { width: 100%; height: 12px; background: #eee; border-radius: 6px; margin: 15px 0; overflow: hidden; border: 1px solid #4caf50; }
-        #timer-fill { height: 100%; background: #ff4757; width: 100%; transition: 0.1s linear; }
         #plant-display { height: 200px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 20px; }
-        #plant-img { max-height: 100%; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
 <body>
 
     <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; text-align: center;">
         <h1 style="color: #4caf50;">🌱 Plant Quest</h1>
-        <p>Taklukkan 3 tantangan berkebun yang berbeda!</p>
+        <p>Taklukkan 3 level kuis tumbuhan!</p>
         <input type="text" id="playerName" class="input-field" placeholder="Nama Pekebun...">
         <button class="btn-main" onclick="startGame()">MULAI</button>
     </div>
@@ -37,23 +34,16 @@
             <span id="heartsContainer">❤️❤️❤️</span>
         </div>
 
-        <div id="area-lvl1">
+        <div id="area-quiz">
             <div id="question-box" style="background:#f0fdf4; padding:15px; border-radius:15px; margin-bottom:15px; font-weight:bold; color:#333; min-height: 60px;"></div>
             <div id="options-area"></div>
         </div>
 
         <div id="area-lvl2" style="display:none;">
-            <div id="plant-display"><img src="pohon_kecil.png"></div>
+            <div id="plant-display"><img src="pohon_kecil.png" style="max-height: 100%;"></div>
             <p id="hint-box" style="font-weight:bold; color:#333; margin-bottom:15px;"></p>
             <input type="text" id="typeAnswer" class="input-field" placeholder="Ketik jawaban..." autocomplete="off">
             <button class="btn-main" style="font-size:1rem; padding:12px 30px;" onclick="checkTypeAnswer()">KIRIM</button>
-        </div>
-
-        <div id="area-lvl3" style="display:none;">
-            <div id="plant-display"><img id="plant-img-lvl3" src="pohon_besar.png"></div>
-            <p style="font-weight:bold; color: #333;">SIRAM SECEPATNYA! (30 Klik)</p>
-            <div class="timer-bar"><div id="timer-fill"></div></div>
-            <button class="btn-main" id="waterBtn" onclick="clickWater()">SIRAM 💧 (<span id="clickCount">0</span>)</button>
         </div>
     </div>
 
@@ -74,13 +64,12 @@
     <audio id="sfxCorrect" src="correct_sound.m4a"></audio>
     <audio id="sfxWrong" src="wrong_sound.m4a"></audio>
     <audio id="sfxType" src="typing_sound.m4a"></audio>
-    <audio id="sfxWater" src="water_splash.m4a"></audio>
     <audio id="sfxWin" src="win_sound.m4a"></audio>
     <audio id="sfxLose" src="lose_sound.m4a"></audio>
 
     <script>
-        let currentLevel = 1, currentQ = 0, lives = 3, clicks = 0, timerInterval;
-        
+        let currentLevel = 1, currentQ = 0, lives = 3;
+
         const qLvl1 = [
             { q: "Apa yang dibutuhkan tumbuhan untuk fotosintesis?", c: ["Oksigen", "Cahaya Matahari", "Susu"], a: 1 },
             { q: "Bagian tumbuhan yang menyerap air adalah?", c: ["Daun", "Batang", "Akar"], a: 2 },
@@ -97,6 +86,14 @@
             { q: "Tumbuhan pemakan serangga?", a: "kantong semar" }
         ];
 
+        const qLvl3 = [
+            { q: "Aku bunga yang selalu mengikuti arah matahari. Siapakah aku?", c: ["Mawar", "Matahari", "Melati"], a: 1 },
+            { q: "Aku tumbuhan yang menutup daun saat disentuh. Aku adalah...", c: ["Putri Malu", "Rumput", "Cemara"], a: 0 },
+            { q: "Aku buah yang kulitnya berduri tapi dalamnya manis. Aku adalah...", c: ["Nanas", "Durian", "Salak"], a: 1 },
+            { q: "Aku dikenal sebagai 'Emas Hijau' karena bermanfaat. Tumbuhan apa aku?", c: ["Padi", "Bambu", "Kelapa"], a: 2 },
+            { q: "Tumbuhan yang akarnya bisa menembus tembok?", c: ["Beringin", "Lumut", "Parasit"], a: 0 }
+        ];
+
         function startGame() {
             const name = document.getElementById('playerName').value;
             if(!name.trim()) return;
@@ -107,23 +104,28 @@
         }
 
         function loadLevel() {
-            lives = 3; updateHearts();
-            if(currentLevel === 1) { showLvl1(); }
+            lives = 3; 
+            updateHearts();
+            if(currentLevel === 1) { 
+                document.getElementById('area-quiz').style.display = 'block';
+                document.getElementById('area-lvl2').style.display = 'none';
+                showQuiz(qLvl1, "LEVEL 1: PILIHAN GANDA"); 
+            }
             else if(currentLevel === 2) { 
-                document.getElementById('area-lvl1').style.display = 'none';
+                document.getElementById('area-quiz').style.display = 'none';
                 document.getElementById('area-lvl2').style.display = 'block';
                 showLvl2(); 
             }
             else { 
+                document.getElementById('area-quiz').style.display = 'block';
                 document.getElementById('area-lvl2').style.display = 'none';
-                document.getElementById('area-lvl3').style.display = 'block';
-                showLvl3(); 
+                showQuiz(qLvl3, "LEVEL 3: TEKA-TEKI SULIT"); 
             }
         }
 
-        function showLvl1() {
-            document.getElementById('levelLabel').innerText = "LEVEL 1: PILIHAN GANDA";
-            const q = qLvl1[currentQ];
+        function showQuiz(questions, label) {
+            document.getElementById('levelLabel').innerText = label;
+            const q = questions[currentQ];
             document.getElementById('question-box').innerText = q.q;
             const optArea = document.getElementById('options-area');
             optArea.innerHTML = "";
@@ -135,7 +137,7 @@
                     if(i === q.a) {
                         document.getElementById('sfxCorrect').play();
                         currentQ++;
-                        if(currentQ < qLvl1.length) showLvl1();
+                        if(currentQ < questions.length) showQuiz(questions, label);
                         else finishLevel();
                     } else fail();
                 };
@@ -160,51 +162,27 @@
             } else { fail(); document.getElementById('typeAnswer').value = ""; }
         }
 
-        function showLvl3() {
-            document.getElementById('levelLabel').innerText = "LEVEL 3: SIRAM CEPAT";
-            let timeLeft = 100;
-            timerInterval = setInterval(() => {
-                timeLeft -= 1.25; // 8 detik total
-                document.getElementById('timer-fill').style.width = timeLeft + "%";
-                if(timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    document.getElementById('bgm').pause();
-                    document.getElementById('sfxLose').play();
-                    document.getElementById('loseScreen').style.display = 'flex';
-                }
-            }, 100); 
-        }
-
-        function clickWater() {
-            clicks++;
-            document.getElementById('sfxWater').currentTime = 0;
-            document.getElementById('sfxWater').play();
-            document.getElementById('clickCount').innerText = clicks;
-            const img = document.getElementById('plant-img-lvl3');
-            img.style.transform = "scale(1.1) rotate(5deg)";
-            setTimeout(() => img.style.transform = "scale(1) rotate(0deg)", 50);
-            
-            if(clicks >= 30) {
-                clearInterval(timerInterval);
+        function finishLevel() {
+            if (currentLevel === 3) {
                 document.getElementById('bgm').pause();
                 document.getElementById('sfxWin').play();
                 document.getElementById('winScreen').style.display = 'flex';
+            } else {
+                document.getElementById('levelUpScreen').style.display = 'flex';
             }
         }
 
-        function finishLevel() {
-            document.getElementById('levelUpScreen').style.display = 'flex';
-        }
-
         function nextLevel() {
-            currentLevel++; currentQ = 0;
+            currentLevel++; 
+            currentQ = 0;
             document.getElementById('levelUpScreen').style.display = 'none';
             loadLevel();
         }
 
         function fail() {
             document.getElementById('sfxWrong').play();
-            lives--; updateHearts();
+            lives--; 
+            updateHearts();
             if(lives <= 0) {
                 document.getElementById('bgm').pause();
                 document.getElementById('sfxLose').play();
@@ -212,7 +190,9 @@
             }
         }
 
-        function updateHearts() { document.getElementById('heartsContainer').innerText = "❤️".repeat(lives); }
+        function updateHearts() { 
+            document.getElementById('heartsContainer').innerText = "❤️".repeat(lives); 
+        }
 
         document.getElementById('typeAnswer').addEventListener('input', () => {
             document.getElementById('sfxType').currentTime = 0;
