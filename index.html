@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Quest: Winner Edition 🌿</title>
+    <title>Plant Quest: Winner Character 🌿</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #e8f5e9 url('game_bg.jpg') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #2e7d32; overflow: hidden; }
@@ -15,14 +15,16 @@
         .btn-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #e68a00; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; text-align: center; padding: 20px; }
         .input-field { width: 80%; padding: 12px; border-radius: 10px; border: 2px solid #4caf50; text-align: center; font-family: 'Poppins'; margin-bottom: 15px; font-size: 1.1rem; outline: none; }
-        .win-vid { width: 250px; border-radius: 20px; margin-bottom: 20px; border: 3px solid #ffeb3b; }
+        
+        /* Gaya untuk video pemenang */
+        .win-video { width: 280px; border-radius: 20px; border: 5px solid #ffeb3b; box-shadow: 0 0 20px rgba(255, 235, 59, 0.5); margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
     <div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300;">
         <h1 style="color: #4caf50;">🌱 Plant Quest</h1>
-        <p>Gunakan ilmu untuk menanam pohon!</p>
+        <p>Tumbuhkan tanamanmu dengan pengetahuan!</p>
         <input type="text" id="playerName" class="input-field" placeholder="Nama Pekebun...">
         <button class="btn-main" onclick="startGame()">GAS MULAI</button>
     </div>
@@ -45,20 +47,21 @@
             </div>
             <p id="hint-box" style="font-weight:bold; color:#333; margin-bottom:15px;"></p>
             <input type="text" id="typeAnswer" class="input-field" placeholder="Ketik jawaban..." autocomplete="off">
-            <button class="btn-main" style="font-size:1rem; padding:10px 25px;" onclick="checkTypeAnswer()">KIRIM</button>
+            <button class="btn-main" style="font-size:1rem; padding:10px 25px;" onclick="checkTypeAnswer()">KIRIM JAWABAN</button>
         </div>
     </div>
 
     <div class="overlay" id="levelUpScreen">
-        <video id="winnerVid" class="win-vid" muted playsinline>
+        <video id="winVid" class="win-video" playsinline loop>
             <source src="winner_character.mp4" type="video/mp4">
         </video>
-        <h1 style="color: #ffeb3b;">LEVEL SELESAI! 🆙</h1>
-        <button class="btn-main" onclick="nextLevel()">LANJUT</button>
+        <h1 style="color: #ffeb3b;">LEVEL BERHASIL! 🆙</h1>
+        <p>Tanamanmu senang sekali!</p>
+        <button class="btn-main" onclick="nextLevel()">LANJUT LEVEL</button>
     </div>
 
     <div class="overlay" id="winScreen">
-        <video id="finalWinnerVid" class="win-vid" muted playsinline>
+        <video id="finalWinVid" class="win-video" playsinline loop>
             <source src="winner_character.mp4" type="video/mp4">
         </video>
         <h1 style="color: #4caf50; font-size: 2.5rem;">MASTER GARDENER! 🏆</h1>
@@ -66,8 +69,8 @@
     </div>
 
     <div class="overlay" id="loseScreen">
-        <h1 style="color: #ff4757; font-size: 2.5rem;">GAGAL 😭</h1>
-        <p>Jangan menyerah, ayo asah pengetahuanmu!</p>
+        <h1 style="color: #ff4757; font-size: 2.5rem;">BELUM BERHASIL 😭</h1>
+        <p>Ayo asah lagi pengetahuanmu!</p>
         <button class="btn-main" onclick="location.reload()">COBA LAGI</button>
     </div>
 
@@ -146,7 +149,7 @@
                         document.getElementById('sfxCorrect').play();
                         currentQ++;
                         if(currentQ < questions.length) showQuiz(questions, label);
-                        else finishLevel();
+                        else playWinState();
                     } else fail();
                 };
                 optArea.appendChild(btn);
@@ -166,32 +169,30 @@
                 currentQ++;
                 document.getElementById('typeAnswer').value = "";
                 if(currentQ < qLvl2.length) showLvl2();
-                else finishLevel();
+                else playWinState();
             } else { fail(); document.getElementById('typeAnswer').value = ""; }
         }
 
-        function finishLevel() {
+        function playWinState() {
+            // Hentikan BGM utama dan putar suara menang
             document.getElementById('bgm').pause();
+            document.getElementById('sfxWin').currentTime = 0;
             document.getElementById('sfxWin').play();
             
             if (currentLevel === 3) {
-                const vid = document.getElementById('finalWinnerVid');
                 document.getElementById('winScreen').style.display = 'flex';
-                vid.currentTime = 0;
-                vid.play();
+                document.getElementById('finalWinVid').play();
             } else {
-                const vid = document.getElementById('winnerVid');
                 document.getElementById('levelUpScreen').style.display = 'flex';
-                vid.currentTime = 0;
-                vid.play();
+                document.getElementById('winVid').play();
             }
         }
 
         function nextLevel() {
             currentLevel++; currentQ = 0;
             document.getElementById('levelUpScreen').style.display = 'none';
+            document.getElementById('winVid').pause();
             document.getElementById('sfxWin').pause();
-            document.getElementById('sfxWin').currentTime = 0;
             document.getElementById('bgm').play();
             loadLevel();
         }
